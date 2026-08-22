@@ -44,8 +44,8 @@ export default function Login() {
       <div className="auth-visual">
         <div className="content">
           <div className="sidebar-logo" style={{ padding: '0 0 40px' }}>
-            <div className="mark">GT</div>
-            <div className="word" style={{ fontSize: '22px' }}>GlobeTrotter</div>
+            <div className="mark"><img src="/logo.png" alt="GlobeNest" style={{ width: "100%", height: "100%", objectFit: "contain" }} /></div>
+            <div className="word" style={{ fontSize: '22px' }}>GlobeNest</div>
           </div>
         </div>
 
@@ -54,7 +54,7 @@ export default function Login() {
             "The best itineraries aren't planned in spreadsheets — they're built city by city, day by day, until the journey feels completely yours."
           </p>
           <p className="quote-meta mono">
-            GLOBETROTTER · SYSTEM 1.0 · CONNECTED TO MYSQL DATABASE
+            GLOBENEST · SYSTEM 1.0 · CONNECTED TO MYSQL DATABASE
           </p>
         </div>
       </div>

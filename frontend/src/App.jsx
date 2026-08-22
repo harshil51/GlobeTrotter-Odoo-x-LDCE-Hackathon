@@ -17,6 +17,7 @@ import Budget from './pages/Budget';
 import Profile from './pages/Profile';
 import PublicTrip from './pages/PublicTrip';
 import Admin from './pages/Admin';
+import Landing from './pages/Landing';
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
@@ -32,6 +33,14 @@ const PublicOnlyRoute = ({ children }) => {
   return children;
 };
 
+const AdminOnlyRoute = ({ children }) => {
+  const { isAuthenticated, user, loading } = useAuth();
+  if (loading) return null;
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
+  if (user?.email !== 'admin@globetrotter.app') return <Navigate to="/dashboard" replace />;
+  return children;
+};
+
 function App() {
   return (
     <ToastProvider>
@@ -43,8 +52,8 @@ function App() {
             <Route path="/register" element={<PublicOnlyRoute><Register /></PublicOnlyRoute>} />
             <Route path="/public/trips/:token" element={<PublicTrip />} />
 
-            {/* Redirect / to dashboard or login */}
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            {/* Main Landing Page */}
+            <Route path="/" element={<PublicOnlyRoute><Landing /></PublicOnlyRoute>} />
 
             {/* Protected Routes */}
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
@@ -56,7 +65,7 @@ function App() {
             <Route path="/calendar" element={<ProtectedRoute><CalendarPage /></ProtectedRoute>} />
             <Route path="/trips/:id/budget" element={<ProtectedRoute><Budget /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-            <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
+            <Route path="/admin" element={<AdminOnlyRoute><Admin /></AdminOnlyRoute>} />
 
             {/* Catch-all */}
             <Route path="*" element={<Navigate to="/dashboard" replace />} />

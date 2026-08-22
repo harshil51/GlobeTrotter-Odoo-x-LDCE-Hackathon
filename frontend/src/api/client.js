@@ -26,4 +26,15 @@ api.interceptors.response.use(
   }
 );
 
+api.upload = async (url, formData) => {
+  const token = localStorage.getItem('globetrotter_token');
+  const response = await api.post(url, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+      Authorization: token ? `Bearer ${token}` : '',
+    },
+  });
+  return response;
+};
+
 export default api;

@@ -47,7 +47,13 @@ html, body {
 
 body {
   font-family: var(--font-display);
-  background: var(--mist-50);
+  background: 
+    radial-gradient(at 0% 0%, rgba(43, 167, 168, 0.25) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(255, 138, 92, 0.2) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(43, 167, 168, 0.25) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, rgba(255, 138, 92, 0.2) 0px, transparent 50%),
+    var(--mist-50);
+  background-attachment: fixed;
   color: var(--ink);
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
@@ -325,10 +331,12 @@ button {
 
 /* ============ CARDS ============ */
 .card {
-  background: #fff;
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--line-soft);
+  box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.4);
 }
 .card-hover {
   transition: transform .2s ease, box-shadow .2s ease;
@@ -346,7 +354,10 @@ button {
 .sidebar {
   width: 240px;
   flex-shrink: 0;
-  background: var(--navy-950);
+  background: rgba(7, 27, 38, 0.65);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
   color: #e7f2f0;
   display: flex;
   flex-direction: column;
@@ -365,14 +376,12 @@ button {
   width: 36px;
   height: 36px;
   border-radius: 10px;
-  background: linear-gradient(135deg, var(--teal-400), var(--ocean-600));
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 800;
-  font-size: 16px;
-  color: #fff;
   flex-shrink: 0;
+  overflow: hidden;
 }
 .sidebar-logo .word {
   font-weight: 800;
@@ -460,9 +469,11 @@ button {
   position: sticky;
   top: 0;
   z-index: 30;
-  background: rgba(246,250,249,.88);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--line-soft);
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.2);
   padding: 14px 32px;
   display: flex;
   align-items: center;
@@ -475,7 +486,9 @@ button {
 }
 .topbar .search-wrap input {
   padding-left: 40px;
-  background: #fff;
+  background: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
 }
 .topbar .search-wrap svg {
   position: absolute;
@@ -502,6 +515,7 @@ button {
   justify-content: center;
   color: var(--ink-soft);
   transition: all .15s;
+  box-shadow: var(--shadow-sm);
 }
 .icon-btn:hover {
   border-color: var(--teal-400);
@@ -1268,4 +1282,62 @@ button {
     padding: 4px 8px;
   }
   .mobile-nav a.active { color: var(--teal-600); }
+}
+/* --- FULLCALENDAR GLASSMORPHISM OVERRIDES --- */
+.fc {
+  --fc-border-color: rgba(255, 255, 255, 0.15);
+  --fc-page-bg-color: transparent;
+  --fc-neutral-bg-color: rgba(255, 255, 255, 0.05);
+  --fc-today-bg-color: rgba(43, 167, 168, 0.1);
+  --fc-button-bg-color: rgba(255, 255, 255, 0.2);
+  --fc-button-border-color: rgba(255, 255, 255, 0.3);
+  --fc-button-text-color: var(--ink);
+  --fc-button-hover-bg-color: rgba(255, 255, 255, 0.4);
+  --fc-button-hover-border-color: rgba(255, 255, 255, 0.5);
+  --fc-button-active-bg-color: var(--teal-500);
+  --fc-button-active-border-color: var(--teal-600);
+  --fc-button-active-text-color: #fff;
+  font-family: inherit;
+}
+.fc-theme-standard .fc-scrollgrid {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(12px);
+}
+.fc .fc-toolbar-title {
+  font-weight: 800;
+  font-size: 20px;
+  color: var(--ink);
+}
+.fc .fc-button-primary {
+  border-radius: 8px;
+  text-transform: capitalize;
+  font-weight: 600;
+  box-shadow: none !important;
+  transition: all 0.2s;
+}
+.fc .fc-col-header-cell-cushion {
+  padding: 12px 8px;
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+.fc .fc-daygrid-day-number {
+  font-weight: 600;
+  color: var(--ink-soft);
+  padding: 8px;
+}
+.fc-h-event {
+  border-radius: 6px;
+  padding: 2px 6px;
+  font-weight: 600;
+  border: none !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.fc-daygrid-event-dot {
+  display: none;
+}
+.fc-event-title {
+  font-weight: 600;
 }

@@ -51,8 +51,8 @@ export default function Shell({ children }) {
       {/* Sidebar */}
       <aside className="sidebar">
         <div className="sidebar-logo">
-          <div className="mark">GT</div>
-          <div className="word">GlobeTrotter</div>
+          <div className="mark"><img src="/logo.png" alt="GlobeNest" style={{ width: "100%", height: "100%", objectFit: "contain" }} /></div>
+          <div className="word">GlobeNest</div>
         </div>
 
         <button
@@ -80,18 +80,22 @@ export default function Shell({ children }) {
           })}
         </nav>
 
-        <div className="sidebar-divider" />
-        <nav className="nav-group">
-          <NavLink
-            to="/admin"
-            className={({ isActive }) =>
-              `nav-item ${isActive ? 'active' : ''}`
-            }
-          >
-            <Shield size={18} />
-            <span>Admin Analytics</span>
-          </NavLink>
-        </nav>
+        {user?.email === 'admin@globetrotter.app' && (
+          <>
+            <div className="sidebar-divider" />
+            <nav className="nav-group">
+              <NavLink
+                to="/admin"
+                className={({ isActive }) =>
+                  `nav-item ${isActive ? 'active' : ''}`
+                }
+              >
+                <Shield size={18} />
+                <span>Admin Analytics</span>
+              </NavLink>
+            </nav>
+          </>
+        )}
 
         <div className="sidebar-foot">
           <div className="sidebar-divider" />

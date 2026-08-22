@@ -60,8 +60,8 @@ export default function PublicTrip() {
       {/* Top Bar */}
       <header style={{ background: 'var(--navy-950)', padding: '14px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div className="sidebar-logo" style={{ padding: 0 }}>
-          <div className="mark" style={{ width: '32px', height: '32px', fontSize: '14px' }}>GT</div>
-          <div className="word" style={{ color: '#fff', fontSize: '17px' }}>GlobeTrotter</div>
+          <div className="mark" style={{ width: '32px', height: '32px', fontSize: '14px' }}><img src="/logo.png" alt="GlobeNest" style={{ width: "100%", height: "100%", objectFit: "contain" }} /></div>
+          <div className="word" style={{ color: '#fff', fontSize: '17px' }}>GlobeNest</div>
         </div>
         <div className="flex gap-8">
           <button className="btn btn-ghost btn-sm" style={{ color: '#fff', borderColor: 'rgba(255,255,255,.2)' }} onClick={() => navigate(-1)}>

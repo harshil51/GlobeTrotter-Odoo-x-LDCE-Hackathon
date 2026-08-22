@@ -51,7 +51,7 @@ export default function Community() {
           <div>
             <span className="eyebrow">Community</span>
             <h1>Public Trip Gallery</h1>
-            <p>Browse inspiring itineraries shared by the GlobeTrotter community. Copy and customize for your own adventure.</p>
+            <p>Browse inspiring itineraries shared by the GlobeNest community. Copy and customize for your own adventure.</p>
           </div>
         </div>
 

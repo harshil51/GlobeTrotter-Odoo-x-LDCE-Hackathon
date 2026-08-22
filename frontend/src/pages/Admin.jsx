@@ -52,7 +52,7 @@ export default function Admin() {
           <div>
             <span className="eyebrow">Platform Analytics</span>
             <h1>Admin Dashboard</h1>
-            <p>Real-time metrics drawn live from the GlobeTrotter MySQL database</p>
+            <p>Real-time metrics drawn live from the GlobeNest MySQL database</p>
           </div>
         </div>
 

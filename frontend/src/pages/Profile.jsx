@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Save, Camera, User, Globe, Phone } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { initials, fmtDateFull } from '../utils/format';
 import Shell from '../components/layout/Shell';
+import api from '../api/client';
 
 export default function Profile() {
   const { user, updateProfile, logout } = useAuth();
@@ -22,6 +23,8 @@ export default function Profile() {
     profilePhoto: user?.profilePhoto || '',
   });
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef(null);
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
@@ -34,6 +37,25 @@ export default function Profile() {
       toast.error(e.message || 'Failed to update profile');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('image', file);
+
+    setUploading(true);
+    try {
+      const res = await api.upload('/upload', formData);
+      set('profilePhoto', res.url);
+      toast.success('Photo uploaded! Click Save Changes to keep it.');
+    } catch (error) {
+      toast.error('Failed to upload image');
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -54,7 +76,9 @@ export default function Profile() {
             <div style={{ position: 'relative' }}>
               <div
                 className="avatar"
-                style={{ width: '80px', height: '80px', fontSize: '24px', borderRadius: '20px' }}
+                style={{ width: '80px', height: '80px', fontSize: '24px', borderRadius: '20px', cursor: 'pointer', opacity: uploading ? 0.5 : 1 }}
+                onClick={() => fileInputRef.current?.click()}
+                title="Click to change photo"
               >
                 {form.profilePhoto ? (
                   <img
@@ -65,23 +89,21 @@ export default function Profile() {
                 ) : (
                   initials(`${form.firstName} ${form.lastName}`)
                 )}
+                <div style={{ position: 'absolute', bottom: -5, right: -5, background: 'var(--teal-500)', borderRadius: '50%', padding: '6px', color: '#fff', boxShadow: '0 2px 5px rgba(0,0,0,0.2)' }}>
+                  <Camera size={14} />
+                </div>
               </div>
+              <input 
+                type="file" 
+                ref={fileInputRef} 
+                style={{ display: 'none' }} 
+                accept="image/*" 
+                onChange={handleFileChange} 
+              />
             </div>
             <div style={{ flex: 1 }}>
               <div style={{ fontWeight: 800, fontSize: '18px' }}>{form.firstName} {form.lastName}</div>
               <div style={{ color: 'var(--ink-faint)', fontSize: '13px', marginBottom: '10px' }}>{user?.email}</div>
-              <div className="field" style={{ marginBottom: 0 }}>
-                <label style={{ fontSize: '11px' }}>
-                  <Camera size={11} style={{ verticalAlign: 'middle' }} /> Profile photo URL
-                </label>
-                <input
-                  className="input"
-                  placeholder="https://images.unsplash.com/…"
-                  value={form.profilePhoto}
-                  onChange={e => set('profilePhoto', e.target.value)}
-                  style={{ fontSize: '13px' }}
-                />
-              </div>
             </div>
           </div>
         </div>

@@ -68,7 +68,7 @@ export default function Register() {
     setLoading(true);
     try {
       await register(formData);
-      toast.success('Account created! Welcome to GlobeTrotter.');
+      toast.success('Account created! Welcome to GlobeNest.');
       navigate('/dashboard');
     } catch (err) {
       toast.error(err.message || 'Registration failed');
@@ -83,8 +83,8 @@ export default function Register() {
       <div className="auth-visual">
         <div className="content">
           <div className="sidebar-logo" style={{ padding: '0 0 40px' }}>
-            <div className="mark">GT</div>
-            <div className="word" style={{ fontSize: '22px' }}>GlobeTrotter</div>
+            <div className="mark"><img src="/logo.png" alt="GlobeNest" style={{ width: "100%", height: "100%", objectFit: "contain" }} /></div>
+            <div className="word" style={{ fontSize: '22px' }}>GlobeNest</div>
           </div>
         </div>
 

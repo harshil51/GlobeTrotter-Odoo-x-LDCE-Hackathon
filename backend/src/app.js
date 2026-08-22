@@ -37,6 +37,10 @@ app.use('/api/trip-activities', require('./routes/activities.routes'));
 app.use('/api/expenses', require('./routes/expenses.routes'));
 app.use('/api/public', require('./routes/public.routes'));
 app.use('/api/admin', require('./routes/admin.routes'));
+app.use('/api/upload', require('./routes/upload.routes'));
+
+// Serve uploads folder statically
+app.use('/uploads', express.static('uploads'));
 
 // Global error handler
 app.use(errorHandler);
