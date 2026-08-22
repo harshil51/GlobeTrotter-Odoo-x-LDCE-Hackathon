@@ -862,6 +862,7 @@ React updates local state → UI re-renders
 | cover_photo | VARCHAR(500) | NULL | Cover image URL |
 | is_public | BOOLEAN | DEFAULT false | Whether shared |
 | share_token | VARCHAR(255) | UNIQUE, NULL | UUID for sharing |
+| total_budget | DECIMAL(10,2) | DEFAULT 0 | User defined overall budget |
 | created_at | DATETIME | DEFAULT NOW() | — |
 | updated_at | DATETIME | AUTO UPDATE | — |
 
@@ -1001,6 +1002,7 @@ erDiagram
         string cover_photo
         boolean is_public
         string share_token UK
+        decimal total_budget
         datetime created_at
         datetime updated_at
     }
@@ -1131,6 +1133,7 @@ model Trip {
   coverPhoto   String?   @map("cover_photo") @db.VarChar(500)
   isPublic     Boolean   @default(false) @map("is_public")
   shareToken   String?   @unique @map("share_token") @db.VarChar(255)
+  totalBudget  Decimal   @default(0) @map("total_budget") @db.Decimal(10, 2)
   createdAt    DateTime  @default(now()) @map("created_at")
   updatedAt    DateTime  @updatedAt @map("updated_at")
 
@@ -1384,7 +1387,8 @@ Authorization: Bearer <jwt_token>
   "description": "7 days in Japan",
   "startDate": "2024-09-01",
   "endDate": "2024-09-07",
-  "coverPhoto": "https://..."
+  "coverPhoto": "https://...",
+  "totalBudget": 85000
 }
 ```
 
@@ -1399,7 +1403,8 @@ Authorization: Bearer <jwt_token>
   "startDate": "2024-09-01",
   "endDate": "2024-09-07",
   "isPublic": false,
-  "shareToken": null
+  "shareToken": null,
+  "totalBudget": 85000
 }
 ```
 
@@ -1421,7 +1426,8 @@ Authorization: Bearer <jwt_token>
     "startDate": "2024-09-01",
     "endDate": "2024-09-07",
     "stopCount": 3,
-    "estimatedBudget": 85000,
+    "totalBudget": 85000,
+    "estimatedBudget": 80000,
     "isPublic": false,
     "status": "upcoming"
   }
@@ -1707,8 +1713,10 @@ Authorization: Bearer <jwt_token>
 **Success 200:**
 ```json
 {
-  "totalEstimated": 85000,
+  "totalBudget": 85000,
+  "totalEstimated": 80000,
   "totalActual": 92000,
+  "remainingBudget": -7000,
   "isOverBudget": true,
   "overBudgetBy": 7000,
   "byCategory": {
