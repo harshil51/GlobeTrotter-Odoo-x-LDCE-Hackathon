@@ -9,7 +9,7 @@ export default function Login() {
   const toast = useToast();
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState('demo@globetrotter.app');
+  const [email, setEmail] = useState('demo.traveler@gmail.com');
   const [password, setPassword] = useState('Demo@1234');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -35,7 +35,7 @@ export default function Login() {
   const handleDemoFill = (demoEmail, demoPass) => {
     setEmail(demoEmail);
     setPassword(demoPass);
-    toast.info(`Filled credentials for ${demoEmail.split('@')[0]}`);
+    toast.info(`Filled credentials for ${demoEmail}`);
   };
 
   return (
@@ -84,7 +84,7 @@ export default function Login() {
                 type="button"
                 className="btn btn-ghost btn-sm"
                 style={{ background: '#fff', fontSize: '12px', padding: '5px 10px' }}
-                onClick={() => handleDemoFill('demo@globetrotter.app', 'Demo@1234')}
+                onClick={() => handleDemoFill('demo.traveler@gmail.com', 'Demo@1234')}
               >
                 Demo Traveler
               </button>
@@ -92,7 +92,7 @@ export default function Login() {
                 type="button"
                 className="btn btn-ghost btn-sm"
                 style={{ background: '#fff', fontSize: '12px', padding: '5px 10px' }}
-                onClick={() => handleDemoFill('masteragent@example.com', 'password123')}
+                onClick={() => handleDemoFill('masteragent.explorer@gmail.com', 'Demo@1234')}
               >
                 MasterAgent
               </button>
@@ -100,7 +100,7 @@ export default function Login() {
                 type="button"
                 className="btn btn-ghost btn-sm"
                 style={{ background: '#fff', fontSize: '12px', padding: '5px 10px' }}
-                onClick={() => handleDemoFill('admin@globetrotter.app', 'Admin@1234')}
+                onClick={() => handleDemoFill('admin.platform@gmail.com', 'Admin@1234')}
               >
                 Admin Platform
               </button>

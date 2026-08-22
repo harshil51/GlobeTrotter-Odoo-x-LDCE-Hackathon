@@ -22,6 +22,21 @@ export default function Profile() {
     bio: user?.bio || '',
     profilePhoto: user?.profilePhoto || '',
   });
+
+  React.useEffect(() => {
+    if (user) {
+      setForm({
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        phone: user.phone || '',
+        city: user.city || '',
+        country: user.country || '',
+        language: user.language || 'en',
+        bio: user.bio || '',
+        profilePhoto: user.profilePhoto || '',
+      });
+    }
+  }, [user]);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef(null);

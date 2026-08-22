@@ -37,7 +37,7 @@ const AdminOnlyRoute = ({ children }) => {
   const { isAuthenticated, user, loading } = useAuth();
   if (loading) return null;
   if (!isAuthenticated) return <Navigate to="/login" replace />;
-  if (user?.email !== 'admin@globetrotter.app') return <Navigate to="/dashboard" replace />;
+  if (user?.role !== 'ADMIN') return <Navigate to="/dashboard" replace />;
   return children;
 };
 

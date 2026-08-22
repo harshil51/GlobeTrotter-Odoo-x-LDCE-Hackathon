@@ -302,14 +302,15 @@ async function main() {
   // ==================== 3. SEED USERS ====================
   const demoHash = await bcrypt.hash('Demo@1234', 12);
   const adminHash = await bcrypt.hash('Admin@1234', 12);
-  const passHash = await bcrypt.hash('password123', 12);
 
   const userDemo = await prisma.user.create({
     data: {
       firstName: 'Demo',
       lastName: 'Traveler',
-      email: 'demo@globetrotter.app',
+      email: 'demo.traveler@gmail.com',
       passwordHash: demoHash,
+      role: 'USER',
+      emailVerified: true,
       phone: '+91 98765 43210',
       city: 'Bangalore',
       country: 'India',
@@ -322,8 +323,10 @@ async function main() {
     data: {
       firstName: 'MasterAgent',
       lastName: 'Explorer',
-      email: 'masteragent@example.com',
-      passwordHash: passHash,
+      email: 'masteragent.explorer@gmail.com',
+      passwordHash: demoHash,
+      role: 'USER',
+      emailVerified: true,
       phone: '+91 90000 00000',
       city: 'Ahmedabad',
       country: 'India',
@@ -336,8 +339,10 @@ async function main() {
     data: {
       firstName: 'Admin',
       lastName: 'Platform',
-      email: 'admin@globetrotter.app',
+      email: 'admin.platform@gmail.com',
       passwordHash: adminHash,
+      role: 'ADMIN',
+      emailVerified: true,
       phone: '+91 99999 88888',
       city: 'Mumbai',
       country: 'India',
