@@ -5,8 +5,28 @@ const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
 
-app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:5173' }));
+// Allow both port 5173 and 5174 (Vite's dev server, picks 5174 if 5173 is taken)
+const allowedOrigins = [
+  process.env.CLIENT_URL || 'http://localhost:5173',
+  'http://localhost:5173',
+  'http://localhost:5174',
+];
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow requests with no origin (curl, Postman, etc.)
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error(`CORS policy: origin ${origin} not allowed`));
+    }
+  },
+  credentials: true,
+}));
 app.use(express.json());
+
+// Health check endpoints
+app.get('/health', (req, res) => res.json({ status: 'ok', message: 'GlobeTrotter API is running' }));
+app.get('/api/health', (req, res) => res.json({ success: true, message: 'GlobeTrotter API is running' }));
 
 // Routes
 app.use('/api/auth', require('./routes/auth.routes'));
@@ -17,8 +37,6 @@ app.use('/api/trip-activities', require('./routes/activities.routes'));
 app.use('/api/expenses', require('./routes/expenses.routes'));
 app.use('/api/public', require('./routes/public.routes'));
 app.use('/api/admin', require('./routes/admin.routes'));
-
-app.get('/health', (req, res) => res.json({ status: 'ok' }));
 
 // Global error handler
 app.use(errorHandler);

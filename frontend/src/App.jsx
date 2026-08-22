@@ -41,7 +41,7 @@ function App() {
             {/* Public Routes */}
             <Route path="/login" element={<PublicOnlyRoute><Login /></PublicOnlyRoute>} />
             <Route path="/register" element={<PublicOnlyRoute><Register /></PublicOnlyRoute>} />
-            <Route path="/public/trip/:token" element={<PublicTrip />} />
+            <Route path="/public/trips/:token" element={<PublicTrip />} />
 
             {/* Redirect / to dashboard or login */}
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
@@ -52,7 +52,7 @@ function App() {
             <Route path="/community" element={<ProtectedRoute><Community /></ProtectedRoute>} />
             <Route path="/trips" element={<ProtectedRoute><Trips /></ProtectedRoute>} />
             <Route path="/trips/new" element={<ProtectedRoute><NewTrip /></ProtectedRoute>} />
-            <Route path="/trips/:id" element={<ProtectedRoute><Itinerary /></ProtectedRoute>} />
+            <Route path="/trips/:id/itinerary" element={<ProtectedRoute><Itinerary /></ProtectedRoute>} />
             <Route path="/calendar" element={<ProtectedRoute><CalendarPage /></ProtectedRoute>} />
             <Route path="/trips/:id/budget" element={<ProtectedRoute><Budget /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
