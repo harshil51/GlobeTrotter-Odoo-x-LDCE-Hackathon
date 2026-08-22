@@ -213,23 +213,7 @@ export default function Profile() {
           </button>
         </div>
 
-        {/* Danger Zone */}
-        <div className="card" style={{ padding: '20px', border: '1px solid #f7c6c3' }}>
-          <div style={{ fontWeight: 800, fontSize: '14px', color: 'var(--danger)', marginBottom: '10px' }}>
-            ⚠️ Account Actions
-          </div>
-          <div className="flex gap-10">
-            <button
-              className="btn btn-danger"
-              onClick={() => {
-                logout();
-                navigate('/login');
-              }}
-            >
-              Log Out
-            </button>
-          </div>
-        </div>
+
       </div>
     </Shell>
   );
