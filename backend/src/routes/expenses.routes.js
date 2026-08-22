@@ -7,6 +7,7 @@ const { expenseSchema } = require('../validators/expense.schema');
 
 router.use(authMiddleware);
 
+router.get('/budget/:tripId', expensesController.getBudget);
 router.get('/', expensesController.getExpenses);
 router.post('/', validate(expenseSchema), expensesController.addExpense);
 router.put('/:id', validate(expenseSchema.partial()), expensesController.updateExpense);

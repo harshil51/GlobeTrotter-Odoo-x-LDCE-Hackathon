@@ -3,6 +3,7 @@ const router = express.Router();
 const publicController = require('../controllers/public.controller');
 const authMiddleware = require('../middleware/auth');
 
+router.get('/trips', publicController.getCommunityTrips);
 router.get('/trips/:shareToken', publicController.getPublicTrip);
 
 router.post('/trips/:tripId/share', authMiddleware, publicController.shareTrip);

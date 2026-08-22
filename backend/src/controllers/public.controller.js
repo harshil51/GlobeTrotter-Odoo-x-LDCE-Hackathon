@@ -2,6 +2,22 @@ const prisma = require('../utils/prismaClient');
 const asyncHandler = require('express-async-handler');
 const { createShareToken, copyTrip } = require('../services/share.service');
 
+const getCommunityTrips = asyncHandler(async (req, res) => {
+  const trips = await prisma.trip.findMany({
+    where: { isPublic: true },
+    include: {
+      user: { select: { firstName: true, lastName: true, city: true, country: true, profilePhoto: true } },
+      stops: {
+        include: { city: true },
+        orderBy: { position: 'asc' }
+      },
+      _count: { select: { stops: true, expenses: true } }
+    },
+    orderBy: { createdAt: 'desc' }
+  });
+  res.json(trips);
+});
+
 const shareTrip = asyncHandler(async (req, res) => {
   const tripId = parseInt(req.params.tripId);
   const trip = await prisma.trip.findUnique({ where: { id: tripId } });
@@ -37,7 +53,7 @@ const getPublicTrip = asyncHandler(async (req, res) => {
   const trip = await prisma.trip.findUnique({
     where: { shareToken },
     include: {
-      user: { select: { firstName: true, profilePhoto: true } },
+      user: { select: { firstName: true, lastName: true, profilePhoto: true, city: true, country: true } },
       stops: {
         include: {
           city: true,
@@ -47,7 +63,8 @@ const getPublicTrip = asyncHandler(async (req, res) => {
           }
         },
         orderBy: { position: 'asc' }
-      }
+      },
+      expenses: true
     }
   });
 
@@ -63,4 +80,4 @@ const duplicateTrip = asyncHandler(async (req, res) => {
   res.status(201).json(newTrip);
 });
 
-module.exports = { shareTrip, unshareTrip, getPublicTrip, duplicateTrip };
+module.exports = { getCommunityTrips, shareTrip, unshareTrip, getPublicTrip, duplicateTrip };
