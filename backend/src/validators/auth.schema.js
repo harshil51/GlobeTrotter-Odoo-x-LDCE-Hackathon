@@ -44,7 +44,7 @@ const updateProfileSchema = z.object({
   country: z.string().max(100).optional(),
   language: z.string().max(10).optional(),
   bio: z.string().optional(),
-  profilePhoto: z.string().url().optional(),
+  profilePhoto: z.union([z.string().url(), z.literal(''), z.undefined()]),
 });
 
 module.exports = { registerSchema, loginSchema, updateProfileSchema };

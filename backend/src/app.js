@@ -54,6 +54,7 @@ app.use('/api/expenses', require('./routes/expenses.routes'));
 app.use('/api/public', require('./routes/public.routes'));
 app.use('/api/admin', require('./routes/admin.routes'));
 app.use('/api/upload', require('./routes/upload.routes'));
+app.use('/api/travel', require('./routes/travel.routes'));
 
 // Serve uploads folder statically
 app.use('/uploads', express.static('uploads'));

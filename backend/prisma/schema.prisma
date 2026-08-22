@@ -36,6 +36,7 @@ model User {
   updatedAt                 DateTime  @updatedAt @map("updated_at")
 
   trips         Trip[]
+  savedPlaces   SavedPlace[]
 
   @@map("users")
 }
@@ -57,6 +58,10 @@ model Trip {
   user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   stops        Stop[]
   expenses     Expense[]
+  hotelSelections HotelSelection[]
+  flightSelections FlightSelection[]
+  preference       TripPreference?
+  generatedPlan    GeneratedItinerary?
 
   @@index([userId])
   @@index([shareToken])
@@ -74,6 +79,7 @@ model City {
   popularity  Int       @default(0)
   imageUrl    String?   @map("image_url") @db.VarChar(500)
   description String?   @db.Text
+  placeId     String?   @map("place_id") @db.VarChar(255)
   createdAt   DateTime  @default(now()) @map("created_at")
 
   stops       Stop[]
@@ -129,6 +135,7 @@ model Activity {
   duration      Int?             // minutes
   imageUrl      String?          @map("image_url") @db.VarChar(500)
   locationName  String?          @map("location_name") @db.VarChar(255)
+  placeId       String?          @map("place_id") @db.VarChar(255)
   createdAt     DateTime         @default(now()) @map("created_at")
 
   city           City           @relation(fields: [cityId], references: [id])
@@ -186,4 +193,87 @@ model Expense {
   @@index([tripId])
   @@index([category])
   @@map("expenses")
+}
+
+model SavedPlace {
+  id          Int      @id @default(autoincrement())
+  userId      Int      @map("user_id")
+  placeId     String   @map("place_id") @db.VarChar(255) // External ID
+  name        String   @db.VarChar(255)
+  imageUrl    String?  @map("image_url") @db.VarChar(500)
+  category    String?  @db.VarChar(100)
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("saved_places")
+}
+
+model HotelSelection {
+  id             Int      @id @default(autoincrement())
+  tripId         Int      @map("trip_id")
+  externalId     String   @map("external_id") @db.VarChar(255)
+  provider       String   @db.VarChar(100)
+  name           String   @db.VarChar(255)
+  price          Decimal  @db.Decimal(10, 2)
+  currency       String   @db.VarChar(10)
+  checkIn        DateTime @map("check_in") @db.Date
+  checkOut       DateTime @map("check_out") @db.Date
+  imageUrl       String?  @map("image_url") @db.VarChar(500)
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  trip Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)
+
+  @@index([tripId])
+  @@map("hotel_selections")
+}
+
+model FlightSelection {
+  id             Int      @id @default(autoincrement())
+  tripId         Int      @map("trip_id")
+  externalId     String   @map("external_id") @db.VarChar(255)
+  provider       String   @db.VarChar(100)
+  airline        String   @db.VarChar(255)
+  flightNumber   String   @map("flight_number") @db.VarChar(50)
+  departureCode  String   @map("departure_code") @db.VarChar(10)
+  arrivalCode    String   @map("arrival_code") @db.VarChar(10)
+  departureTime  DateTime @map("departure_time")
+  arrivalTime    DateTime @map("arrival_time")
+  price          Decimal  @db.Decimal(10, 2)
+  currency       String   @db.VarChar(10)
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  trip Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)
+
+  @@index([tripId])
+  @@map("flight_selections")
+}
+
+model TripPreference {
+  id             Int      @id @default(autoincrement())
+  tripId         Int      @unique @map("trip_id")
+  travelStyle    String   @default("Balanced") @map("travel_style") @db.VarChar(100)
+  interests      String?  @db.Text // JSON string or comma-separated
+  pace           String   @default("Medium") @db.VarChar(50)
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  trip Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)
+
+  @@map("trip_preferences")
+}
+
+model GeneratedItinerary {
+  id             Int      @id @default(autoincrement())
+  tripId         Int      @unique @map("trip_id")
+  content        String   @db.Text @map("content") // Store structured JSON
+  estimatedCost  Decimal  @map("estimated_cost") @db.Decimal(10, 2)
+  isAccepted     Boolean  @default(false) @map("is_accepted")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  trip Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)
+
+  @@map("generated_itineraries")
 }
