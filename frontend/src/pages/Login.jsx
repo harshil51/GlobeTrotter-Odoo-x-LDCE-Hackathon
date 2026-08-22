@@ -9,7 +9,7 @@ export default function Login() {
   const toast = useToast();
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState('demo@globetrotter.app');
+  const [email, setEmail] = useState('demo.traveler@gmail.com');
   const [password, setPassword] = useState('Demo@1234');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -35,7 +35,7 @@ export default function Login() {
   const handleDemoFill = (demoEmail, demoPass) => {
     setEmail(demoEmail);
     setPassword(demoPass);
-    toast.info(`Filled credentials for ${demoEmail.split('@')[0]}`);
+    toast.info(`Filled credentials for ${demoEmail}`);
   };
 
   return (
@@ -75,6 +75,38 @@ export default function Login() {
           </p>
 
 
+          {/* Demo account selector pill */}
+          <div style={{ marginBottom: '20px', padding: '12px', background: 'var(--mist-100)', borderRadius: '12px' }}>
+            <div className="flex items-center gap-6" style={{ fontSize: '12px', fontWeight: 700, color: 'var(--ocean-700)', marginBottom: '8px' }}>
+              <Sparkles size={14} /> Quick Demo Logins (Click to autofill):
+            </div>
+            <div className="flex gap-6" style={{ flexWrap: 'wrap' }}>
+              <button
+                type="button"
+                className="btn btn-ghost btn-sm"
+                style={{ background: '#fff', fontSize: '12px', padding: '5px 10px' }}
+                onClick={() => handleDemoFill('demo.traveler@gmail.com', 'Demo@1234')}
+              >
+                Demo Traveler
+              </button>
+              <button
+                type="button"
+                className="btn btn-ghost btn-sm"
+                style={{ background: '#fff', fontSize: '12px', padding: '5px 10px' }}
+                onClick={() => handleDemoFill('masteragent.explorer@gmail.com', 'Demo@1234')}
+              >
+                MasterAgent
+              </button>
+              <button
+                type="button"
+                className="btn btn-ghost btn-sm"
+                style={{ background: '#fff', fontSize: '12px', padding: '5px 10px' }}
+                onClick={() => handleDemoFill('admin.platform@gmail.com', 'Admin@1234')}
+              >
+                Admin Platform
+              </button>
+            </div>
+          </div>
 
           <form onSubmit={handleSubmit}>
             <div className="field">

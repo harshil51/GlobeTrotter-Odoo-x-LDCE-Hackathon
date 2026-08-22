@@ -60,18 +60,18 @@ const deleteStop = asyncHandler(async (req, res) => {
 const reorderStops = asyncHandler(async (req, res) => {
   const { stops } = req.validatedData;
   
-  // Verify all stops belong to a trip owned by user
-  if (stops.length > 0) {
-    const firstStop = await prisma.stop.findUnique({ where: { id: stops[0].id } });
-    if (!firstStop) return res.status(404).json({ error: 'Stop not found' });
-    await verifyTripOwnership(firstStop.tripId, req.user.id);
+  // Verify ALL stops belong to trips owned by the authenticated user
+  for (const item of stops) {
+    const dbStop = await prisma.stop.findUnique({ where: { id: item.id } });
+    if (!dbStop) return res.status(404).json({ error: `Stop with ID ${item.id} not found` });
+    await verifyTripOwnership(dbStop.tripId, req.user.id);
   }
 
   const updates = stops.map(({ id, position }) =>
     prisma.stop.update({ where: { id }, data: { position } })
   );
   await prisma.$transaction(updates);
-  res.json({ message: 'Stops reordered' });
+  res.json({ message: 'Stops reordered successfully' });
 });
 
 module.exports = { addStop, updateStop, deleteStop, reorderStops };

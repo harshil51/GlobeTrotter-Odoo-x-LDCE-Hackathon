@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Search, Compass, Filter, Plus } from 'lucide-react';
+import { travelApi } from '../api/travel.api';
 import { citiesApi } from '../api/cities.api';
+import { countriesApi } from '../api/countries.api';
 import { fmtMoney, cityCode } from '../utils/format';
 import Shell from '../components/layout/Shell';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
@@ -22,20 +24,33 @@ const CATEGORY_LABEL = { All: 'All', SIGHTSEEING: '🗺️ Sightseeing', FOOD: '
 export default function Explore() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [tab, setTab] = useState('cities');
+  const [tab, setTab] = useState('countries');
   const [cities, setCities] = useState([]);
   const [activities, setActivities] = useState([]);
   const [cityQuery, setCityQuery] = useState(searchParams.get('q') || '');
   const [actQuery, setActQuery] = useState(searchParams.get('q') || '');
+  const [countryQuery, setCountryQuery] = useState('');
   const [actCategory, setActCategory] = useState('All');
   const [loadingCities, setLoadingCities] = useState(true);
   const [loadingActs, setLoadingActs] = useState(false);
+  
+  const [countries, setCountries] = useState([]);
+  const [loadingCountries, setLoadingCountries] = useState(false);
+
+  // Sync state with URL if search changes from topbar
+  useEffect(() => {
+    const q = searchParams.get('q');
+    if (q) {
+      setCityQuery(q);
+      setActQuery(q);
+    }
+  }, [searchParams]);
 
   // Load cities
   useEffect(() => {
     setLoadingCities(true);
-    citiesApi.searchCities(cityQuery, '', 50)
-      .then(setCities)
+    travelApi.searchDestinations(cityQuery || 'popular destinations')
+      .then(res => setCities(res || []))
       .catch(console.error)
       .finally(() => setLoadingCities(false));
   }, [cityQuery]);
@@ -49,6 +64,16 @@ export default function Explore() {
       .catch(console.error)
       .finally(() => setLoadingActs(false));
   }, [actQuery, actCategory, tab]);
+
+  // Load countries
+  useEffect(() => {
+    if (tab !== 'countries') return;
+    setLoadingCountries(true);
+    countriesApi.getCountries()
+      .then(setCountries)
+      .catch(console.error)
+      .finally(() => setLoadingCountries(false));
+  }, [tab]);
 
   return (
     <Shell>
@@ -64,6 +89,7 @@ export default function Explore() {
         {/* Tabs */}
         <div className="tabs">
           <div className={`tab ${tab === 'cities' ? 'active' : ''}`} onClick={() => setTab('cities')}>🌍 Cities ({cities.length})</div>
+          <div className={`tab ${tab === 'countries' ? 'active' : ''}`} onClick={() => setTab('countries')}>🌎 Countries</div>
           <div className={`tab ${tab === 'activities' ? 'active' : ''}`} onClick={() => setTab('activities')}>🎯 Activities</div>
         </div>
 
@@ -99,10 +125,10 @@ export default function Explore() {
                   <div className="grid grid-2">
                     {cities.map(city => (
                       <div
-                        key={city.id}
+                        key={city.placeId}
                         className="dest-card card-hover"
                         style={{ cursor: 'pointer' }}
-                        onClick={() => navigate(`/explore?city=${city.id}`)}
+                        onClick={() => navigate(`/explore?q=${encodeURIComponent(city.name)}`)}
                       >
                         <div className="img-wrap">
                           <img
@@ -121,30 +147,20 @@ export default function Explore() {
                               color: 'var(--navy-900)',
                             }}
                           >
-                            {cityCode(city.name)}
+                            {city.source || 'LIVE'}
                           </div>
                         </div>
                         <div className="body">
                           <h4>{city.name}</h4>
-                          <div className="country">{city.country} · {city.region}</div>
+                          <div className="country">{city.address || 'Global Destination'}</div>
                           <div className="row">
                             <div className="flex gap-6">
-                              <span className="badge badge-teal">{city._count?.activities || 0} activities</span>
-                              {city.costIndex && (
-                                <span className="badge badge-coral" title="Cost Index (higher = more expensive)">
-                                  💲{Number(city.costIndex).toFixed(1)}
-                                </span>
-                              )}
+                              <span className="badge badge-teal">Top Rated</span>
                             </div>
                             <span style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--ink-faint)', fontWeight: 700 }}>
-                              ⭐ {city.popularity}
+                              ⭐ {city.rating} ({city.userRatingsTotal || 0} reviews)
                             </span>
                           </div>
-                          {city.description && (
-                            <p style={{ fontSize: '12px', color: 'var(--ink-soft)', marginTop: '8px', marginBottom: 0, lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                              {city.description}
-                            </p>
-                          )}
                         </div>
                       </div>
                     ))}
@@ -159,10 +175,10 @@ export default function Explore() {
                       attribution='&copy; OpenStreetMap contributors'
                     />
                     {cities.map(city => city.latitude && city.longitude ? (
-                      <Marker key={city.id} position={[city.latitude, city.longitude]}>
+                      <Marker key={city.placeId} position={[city.latitude, city.longitude]}>
                         <Popup>
                           <strong>{city.name}</strong><br/>
-                          {city.country}
+                          {city.address}
                         </Popup>
                       </Marker>
                     ) : null)}
@@ -241,6 +257,52 @@ export default function Explore() {
                         <span style={{ fontSize: '12px', color: 'var(--ink-faint)' }}>
                           {act.duration ? `⏱ ${act.duration} min` : ''}
                         </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
+        )}
+
+        {/* Countries Tab */}
+        {tab === 'countries' && (
+          <>
+            <div className="field" style={{ maxWidth: '400px', marginBottom: '22px' }}>
+              <div className="input-wrap">
+                <input
+                  className="input"
+                  placeholder="Search countries…"
+                  value={countryQuery}
+                  onChange={e => setCountryQuery(e.target.value)}
+                  style={{ paddingLeft: '40px' }}
+                />
+                <span style={{ position: 'absolute', left: '13px', top: '50%', transform: 'translateY(-50%)', color: 'var(--ink-faint)', pointerEvents: 'none' }}>
+                  <Search size={15} />
+                </span>
+              </div>
+            </div>
+
+            {loadingCountries ? (
+              <div style={{ padding: '40px', textAlign: 'center', color: 'var(--ink-faint)' }}>Loading countries…</div>
+            ) : (
+              <div className="grid grid-4">
+                {countries
+                  .filter(c => c.name.toLowerCase().includes(countryQuery.toLowerCase()))
+                  .map(country => (
+                  <div key={country.code} className="dest-card card-hover">
+                    <div className="body">
+                      <div className="flex gap-10 items-center">
+                        <span style={{ fontSize: '32px' }}>{country.flag}</span>
+                        <div>
+                          <h4 style={{ margin: 0 }}>{country.name}</h4>
+                          <span style={{ fontSize: '12px', color: 'var(--ink-faint)' }}>{country.region}</span>
+                        </div>
+                      </div>
+                      <div style={{ marginTop: '10px', fontSize: '13px' }}>
+                        <div><strong>Capital:</strong> {country.capital}</div>
+                        <div><strong>Currency:</strong> {country.currency}</div>
                       </div>
                     </div>
                   </div>

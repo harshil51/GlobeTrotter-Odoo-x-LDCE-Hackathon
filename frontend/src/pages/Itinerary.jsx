@@ -13,6 +13,7 @@ import { fmtDate, fmtMoney, daysBetween, cityCode } from '../utils/format';
 import Modal from '../components/common/Modal';
 import ShareModal from '../components/trips/ShareModal';
 import Shell from '../components/layout/Shell';
+import GeneratedPlan from './GeneratedPlan';
 
 const CATEGORY_LABELS = {
   SIGHTSEEING: '🗺️ Sightseeing',
@@ -181,6 +182,17 @@ export default function Itinerary() {
   }
 
   if (!trip) return null;
+
+  // If the trip has a generated AI plan that hasn't been merged into stops yet
+  if (trip.generatedPlan && !trip.generatedPlan.isAccepted) {
+    return (
+      <Shell>
+        <div className="page" style={{ padding: '20px 0' }}>
+          <GeneratedPlan trip={trip} />
+        </div>
+      </Shell>
+    );
+  }
 
   const nights = daysBetween(trip.startDate, trip.endDate);
 

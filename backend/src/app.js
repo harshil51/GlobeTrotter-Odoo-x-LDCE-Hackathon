@@ -1,11 +1,28 @@
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 
 const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
 
-// Allow both port 5173 and 5174 (Vite's dev server, picks 5174 if 5173 is taken)
+// Security HTTP Headers
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" }
+}));
+
+// Global Rate Limiter: 100 requests per 15 minutes per IP
+const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: { error: 'Too many requests from this IP, please try again after 15 minutes.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use(globalLimiter);
+
+// Allow both port 5173 and 5174 (Vite's dev server)
 const allowedOrigins = [
   process.env.CLIENT_URL || 'http://localhost:5173',
   'http://localhost:5173',
@@ -13,7 +30,6 @@ const allowedOrigins = [
 ];
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow requests with no origin (curl, Postman, etc.)
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
@@ -38,6 +54,7 @@ app.use('/api/expenses', require('./routes/expenses.routes'));
 app.use('/api/public', require('./routes/public.routes'));
 app.use('/api/admin', require('./routes/admin.routes'));
 app.use('/api/upload', require('./routes/upload.routes'));
+app.use('/api/travel', require('./routes/travel.routes'));
 
 // Serve uploads folder statically
 app.use('/uploads', express.static('uploads'));

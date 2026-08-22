@@ -63,8 +63,7 @@ const getPublicTrip = asyncHandler(async (req, res) => {
           }
         },
         orderBy: { position: 'asc' }
-      },
-      expenses: true
+      }
     }
   });
 

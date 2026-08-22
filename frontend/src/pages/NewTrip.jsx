@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Map, Calendar, DollarSign, Loader } from 'lucide-react';
-import { tripsApi } from '../api/trips.api';
+import { travelApi } from '../api/travel.api';
 import { useToast } from '../context/ToastContext';
 import Shell from '../components/layout/Shell';
 import { addDays } from '../utils/format';
@@ -10,6 +10,7 @@ const STEPS = [
   { num: 1, label: 'Trip Basics' },
   { num: 2, label: 'Dates & Budget' },
   { num: 3, label: 'Preferences' },
+  { num: 4, label: 'Review' },
 ];
 
 const COVER_SUGGESTIONS = [
@@ -34,6 +35,10 @@ export default function NewTrip() {
     startDate: today,
     endDate: addDays(today, 7),
     totalBudget: 50000,
+    travelers: 1,
+    travelStyle: 'Balanced',
+    interests: [],
+    destinations: [],
     coverPhoto: COVER_SUGGESTIONS[0],
   });
 
@@ -46,22 +51,25 @@ export default function NewTrip() {
     if (step === 2) {
       if (form.endDate < form.startDate) { toast.error('End date must be on or after start date'); return; }
     }
-    if (step < 3) setStep(s => s + 1);
+    if (step < 4) setStep(s => s + 1);
   };
 
   const handleCreate = async () => {
     setSaving(true);
     try {
-      const trip = await tripsApi.createTrip({
+      const response = await travelApi.generateTripPlan({
         name: form.name.trim(),
-        description: form.description.trim() || undefined,
+        origin: 'Ahmedabad', // Hardcoded for now
+        destinations: form.destinations.length ? form.destinations : [form.name.trim()], 
         startDate: form.startDate,
         endDate: form.endDate,
-        totalBudget: Number(form.totalBudget) || 0,
-        coverPhoto: form.coverPhoto || undefined,
+        budget: Number(form.totalBudget) || 0,
+        travelers: form.travelers,
+        interests: form.interests,
+        travelStyle: form.travelStyle
       });
-      toast.success('Trip created! Start building your itinerary.');
-      navigate(`/trips/${trip.id}/itinerary`);
+      toast.success('Trip created and Itinerary generated!');
+      navigate(`/trips/${response.trip.id}/itinerary`);
     } catch (e) {
       toast.error(e.message || 'Failed to create trip');
     } finally {
@@ -228,8 +236,74 @@ export default function NewTrip() {
             </>
           )}
 
-          {/* Step 3: Confirm & Create */}
+          {/* Step 3: Preferences */}
           {step === 3 && (
+            <>
+              <div className="flex items-center gap-10" style={{ marginBottom: '24px' }}>
+                <Map size={22} style={{ color: 'var(--teal-600)' }} />
+                <div>
+                  <div style={{ fontWeight: 800, fontSize: '17px' }}>Travel Preferences</div>
+                  <div className="text-sm text-mute">Help our AI engine generate the perfect itinerary for you</div>
+                </div>
+              </div>
+
+              <div className="field">
+                <label>Main Destinations (comma separated)</label>
+                <input
+                  className="input"
+                  placeholder="e.g. Paris, Amsterdam"
+                  value={form.destinations.join(', ')}
+                  onChange={e => set('destinations', e.target.value.split(',').map(s => s.trim()).filter(Boolean))}
+                />
+              </div>
+
+              <div className="grid grid-2" style={{ gap: '14px' }}>
+                <div className="field">
+                  <label>Travelers</label>
+                  <input
+                    type="number"
+                    className="input"
+                    value={form.travelers}
+                    min={1}
+                    onChange={e => set('travelers', parseInt(e.target.value))}
+                  />
+                </div>
+                <div className="field">
+                  <label>Travel Style</label>
+                  <select className="input" value={form.travelStyle} onChange={e => set('travelStyle', e.target.value)}>
+                    <option value="Budget">Budget</option>
+                    <option value="Balanced">Balanced</option>
+                    <option value="Luxury">Luxury</option>
+                    <option value="Adventure">Adventure</option>
+                    <option value="Cultural">Cultural</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="field">
+                <label>Interests</label>
+                <div className="flex gap-6" style={{ flexWrap: 'wrap' }}>
+                  {['History', 'Food', 'Nature', 'Shopping', 'Nightlife', 'Photography', 'Art'].map(interest => (
+                    <span
+                      key={interest}
+                      className={`chip ${form.interests.includes(interest) ? 'active' : ''}`}
+                      onClick={() => {
+                        const active = form.interests.includes(interest);
+                        if (active) set('interests', form.interests.filter(i => i !== interest));
+                        else set('interests', [...form.interests, interest]);
+                      }}
+                      style={{ fontSize: '13px', padding: '6px 12px', cursor: 'pointer' }}
+                    >
+                      {interest}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* Step 4: Confirm & Create */}
+          {step === 4 && (
             <>
               <div className="flex items-center gap-10" style={{ marginBottom: '24px' }}>
                 <DollarSign size={22} style={{ color: 'var(--teal-600)' }} />
@@ -258,6 +332,7 @@ export default function NewTrip() {
                 ['Dates', `${form.startDate} → ${form.endDate}`],
                 ['Duration', `${Math.max(1, Math.round((new Date(form.endDate) - new Date(form.startDate)) / 86400000))} nights`],
                 ['Budget', `₹${Number(form.totalBudget).toLocaleString('en-IN')}`],
+                ['Style & Interests', `${form.travelStyle} • ${form.interests.join(', ') || 'General'}`],
               ].map(([label, val]) => (
                 <div key={label} className="flex justify-between" style={{ padding: '9px 0', borderBottom: '1px solid var(--line-soft)', fontSize: '14px' }}>
                   <span style={{ fontWeight: 600, color: 'var(--ink-soft)' }}>{label}</span>
@@ -274,7 +349,7 @@ export default function NewTrip() {
                 color: 'var(--ocean-700)',
                 fontWeight: 600
               }}>
-                🎉 After creating, you'll be taken straight to the Itinerary Builder to add cities and activities!
+                🎉 After creating, our AI engine will generate a smart, geographically optimized itinerary for you!
               </div>
             </>
           )}
@@ -288,7 +363,7 @@ export default function NewTrip() {
               <ArrowLeft size={15} /> {step === 1 ? 'Cancel' : 'Back'}
             </button>
 
-            {step < 3 ? (
+            {step < 4 ? (
               <button className="btn btn-primary" onClick={handleNext}>
                 Next <ArrowRight size={15} />
               </button>

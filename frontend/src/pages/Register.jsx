@@ -72,14 +72,22 @@ export default function Register() {
       toast.error('Please fill in all required fields');
       return;
     }
-    if (formData.password.length < 8) {
-      toast.error('Password must be at least 8 characters long');
+
+    const cleanEmail = formData.email.trim().toLowerCase();
+    if (!cleanEmail.endsWith('@gmail.com')) {
+      toast.error('Please enter a valid Gmail address (@gmail.com).');
+      return;
+    }
+
+    const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
+    if (!strongPasswordRegex.test(formData.password)) {
+      toast.error('Password must contain at least 8 characters, including 1 uppercase, 1 lowercase, 1 number, and 1 special character.');
       return;
     }
 
     setLoading(true);
     try {
-      await register(formData);
+      await register({ ...formData, email: cleanEmail });
       toast.success('Account created! Welcome to GlobeNest.');
       navigate('/dashboard');
     } catch (err) {
@@ -205,6 +213,16 @@ export default function Register() {
                   </div>
                 )}
               </div>
+            <div className="field">
+              <label>Gmail address *</label>
+              <input
+                className="input"
+                type="email"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                placeholder="yourname@gmail.com"
+                required
+              />
             </div>
 
             {/* Row 3: City & Country */}

@@ -6,6 +6,7 @@ import { useToast } from '../context/ToastContext';
 import { initials, fmtDateFull } from '../utils/format';
 import Shell from '../components/layout/Shell';
 import api from '../api/client';
+import { countriesApi } from '../api/countries.api';
 
 export default function Profile() {
   const { user, updateProfile, logout } = useAuth();
@@ -22,9 +23,39 @@ export default function Profile() {
     bio: user?.bio || '',
     profilePhoto: user?.profilePhoto || '',
   });
+
+  React.useEffect(() => {
+    if (user) {
+      setForm({
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        phone: user.phone || '',
+        city: user.city || '',
+        country: user.country || '',
+        language: user.language || 'en',
+        bio: user.bio || '',
+        profilePhoto: user.profilePhoto || '',
+      });
+    }
+  }, [user]);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [countriesList, setCountriesList] = useState([]);
   const fileInputRef = useRef(null);
+
+  React.useEffect(() => {
+    async function loadCountries() {
+      try {
+        const data = await countriesApi.getCountries();
+        if (data && data.length > 0) {
+          setCountriesList(data);
+        }
+      } catch (err) {
+        console.error('Failed to load countries', err);
+      }
+    }
+    loadCountries();
+  }, []);
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
@@ -154,7 +185,14 @@ export default function Profile() {
             </div>
             <div className="field">
               <label>Country</label>
-              <input className="input" value={form.country} onChange={e => set('country', e.target.value)} />
+              <select className="input" value={form.country} onChange={e => set('country', e.target.value)}>
+                <option value="">Select a country...</option>
+                {countriesList.map(c => (
+                  <option key={c.code} value={c.name}>
+                    {c.flag} {c.name}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 

@@ -147,7 +147,7 @@ export default function Dashboard() {
                 key={city.id}
                 className="dest-card card-hover"
                 style={{ width: '210px', cursor: 'pointer' }}
-                onClick={() => navigate(`/explore?city=${city.id}`)}
+                onClick={() => navigate(`/explore?q=${encodeURIComponent(city.name)}`)}
               >
                 <div className="img-wrap">
                   <img
