@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Eye, EyeOff, Sparkles, LogIn } from 'lucide-react';
+import { Eye, EyeOff, Sparkles, LogIn, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 
@@ -43,7 +43,7 @@ export default function Login() {
       {/* Visual Side */}
       <div className="auth-visual">
         <div className="content">
-          <div className="sidebar-logo" style={{ padding: '0 0 40px' }}>
+          <div className="sidebar-logo" style={{ padding: '60px 0 40px' }}>
             <div className="mark"><img src="/logo.png" alt="GlobeNest" style={{ width: "100%", height: "100%", objectFit: "contain" }} /></div>
             <div className="word" style={{ fontSize: '22px' }}>GlobeNest</div>
           </div>
@@ -74,38 +74,7 @@ export default function Login() {
             Log in to manage your multi-city itineraries and budgets.
           </p>
 
-          {/* Demo account selector pill */}
-          <div style={{ marginBottom: '20px', padding: '12px', background: 'var(--mist-100)', borderRadius: '12px' }}>
-            <div className="flex items-center gap-6" style={{ fontSize: '12px', fontWeight: 700, color: 'var(--ocean-700)', marginBottom: '8px' }}>
-              <Sparkles size={14} /> Quick Demo Logins (Click to autofill):
-            </div>
-            <div className="flex gap-6" style={{ flexWrap: 'wrap' }}>
-              <button
-                type="button"
-                className="btn btn-ghost btn-sm"
-                style={{ background: '#fff', fontSize: '12px', padding: '5px 10px' }}
-                onClick={() => handleDemoFill('demo@globetrotter.app', 'Demo@1234')}
-              >
-                Demo Traveler
-              </button>
-              <button
-                type="button"
-                className="btn btn-ghost btn-sm"
-                style={{ background: '#fff', fontSize: '12px', padding: '5px 10px' }}
-                onClick={() => handleDemoFill('masteragent@example.com', 'password123')}
-              >
-                MasterAgent
-              </button>
-              <button
-                type="button"
-                className="btn btn-ghost btn-sm"
-                style={{ background: '#fff', fontSize: '12px', padding: '5px 10px' }}
-                onClick={() => handleDemoFill('admin@globetrotter.app', 'Admin@1234')}
-              >
-                Admin Platform
-              </button>
-            </div>
-          </div>
+
 
           <form onSubmit={handleSubmit}>
             <div className="field">
@@ -165,6 +134,13 @@ export default function Login() {
             >
               <LogIn size={16} /> {loading ? 'Logging in…' : 'Log in'}
             </button>
+            <Link 
+              to="/" 
+              className="btn btn-ghost btn-block btn-lg" 
+              style={{ marginTop: '12px', justifyContent: 'center' }}
+            >
+              <ArrowLeft size={16} /> Back to Home
+            </Link>
           </form>
 
           <p className="text-sm text-mute" style={{ textAlign: 'center', marginTop: '22px' }}>
