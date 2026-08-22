@@ -24,7 +24,7 @@ const CATEGORY_LABEL = { All: 'All', SIGHTSEEING: '🗺️ Sightseeing', FOOD: '
 export default function Explore() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [tab, setTab] = useState('cities');
+  const [tab, setTab] = useState('countries');
   const [cities, setCities] = useState([]);
   const [activities, setActivities] = useState([]);
   const [cityQuery, setCityQuery] = useState(searchParams.get('q') || '');
