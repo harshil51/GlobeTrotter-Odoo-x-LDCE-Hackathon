@@ -77,11 +77,40 @@ class GoogleProvider {
 
   // Fallback Logic for Hackathon
   _mockSearchPlaces(query) {
+    if (query === 'popular destinations' || query === '') {
+      return [
+        {
+          placeId: 'mock_paris', name: 'Paris', address: 'France', rating: 4.8, userRatingsTotal: 45000,
+          latitude: 48.8566, longitude: 2.3522, imageUrl: 'https://images.unsplash.com/photo-1502602881460-5ba5550a1bc6?auto=format&fit=crop&w=800&q=80', source: 'Curated'
+        },
+        {
+          placeId: 'mock_tokyo', name: 'Tokyo', address: 'Japan', rating: 4.9, userRatingsTotal: 62000,
+          latitude: 35.6762, longitude: 139.6503, imageUrl: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=800&q=80', source: 'Curated'
+        },
+        {
+          placeId: 'mock_nyc', name: 'New York City', address: 'United States', rating: 4.7, userRatingsTotal: 89000,
+          latitude: 40.7128, longitude: -74.0060, imageUrl: 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?auto=format&fit=crop&w=800&q=80', source: 'Curated'
+        },
+        {
+          placeId: 'mock_rome', name: 'Rome', address: 'Italy', rating: 4.8, userRatingsTotal: 34000,
+          latitude: 41.9028, longitude: 12.4964, imageUrl: 'https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=800&q=80', source: 'Curated'
+        },
+        {
+          placeId: 'mock_dubai', name: 'Dubai', address: 'UAE', rating: 4.6, userRatingsTotal: 25000,
+          latitude: 25.2048, longitude: 55.2708, imageUrl: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=800&q=80', source: 'Curated'
+        },
+        {
+          placeId: 'mock_sydney', name: 'Sydney', address: 'Australia', rating: 4.8, userRatingsTotal: 18000,
+          latitude: -33.8688, longitude: 151.2093, imageUrl: 'https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?auto=format&fit=crop&w=800&q=80', source: 'Curated'
+        }
+      ];
+    }
+    
     console.log('[GoogleProvider] Mocking search for', query);
     return [
       {
         placeId: 'mock_' + Math.random().toString(36).substring(7),
-        name: `${query} Central Area`,
+        name: `${query}`,
         rating: 4.5,
         userRatingsTotal: 1200,
         latitude: 48.8566,
