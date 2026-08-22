@@ -1,4 +1,0 @@
-DATABASE_URL="mysql://root:@localhost:3306/globetrotter"
-JWT_SECRET="your-super-secret-jwt-key-change-this"
-PORT=5000
-CLIENT_URL="http://localhost:5173"
