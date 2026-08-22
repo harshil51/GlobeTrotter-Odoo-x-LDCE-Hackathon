@@ -10,10 +10,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fullcalendar/daygrid": "^6.1.21",
+    "@fullcalendar/react": "^7.0.2",
+    "@fullcalendar/timegrid": "^6.1.21",
     "axios": "^1.19.0",
+    "leaflet": "^1.9.4",
     "lucide-react": "^1.33.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "react-leaflet": "^5.0.0",
     "react-router-dom": "^7.18.2",
     "recharts": "^3.10.1"
   },

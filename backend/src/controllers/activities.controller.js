@@ -1,13 +1,16 @@
 const prisma = require('../utils/prismaClient');
 const asyncHandler = require('express-async-handler');
 
-// Helper to verify stop -> trip ownership
 const verifyStopOwnership = async (stopId, userId) => {
   const stop = await prisma.stop.findUnique({ 
     where: { id: stopId },
     include: { trip: true }
   });
-  if (!stop || stop.trip.userId !== userId) throw new Error('Forbidden');
+  if (!stop || stop.trip.userId !== userId) {
+    const err = new Error('Forbidden');
+    err.status = 403;
+    throw err;
+  }
   return stop;
 };
 
@@ -16,7 +19,11 @@ const verifyActivityOwnership = async (tripActivityId, userId) => {
     where: { id: tripActivityId },
     include: { stop: { include: { trip: true } } }
   });
-  if (!tripActivity || tripActivity.stop.trip.userId !== userId) throw new Error('Forbidden');
+  if (!tripActivity || tripActivity.stop.trip.userId !== userId) {
+    const err = new Error('Forbidden');
+    err.status = 403;
+    throw err;
+  }
   return tripActivity;
 };
 

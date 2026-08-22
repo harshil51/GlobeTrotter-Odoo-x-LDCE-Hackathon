@@ -4,7 +4,11 @@ const { calculateBudget } = require('../services/budget.service');
 
 const verifyTripOwnership = async (tripId, userId) => {
   const trip = await prisma.trip.findUnique({ where: { id: tripId } });
-  if (!trip || trip.userId !== userId) throw new Error('Forbidden');
+  if (!trip || trip.userId !== userId) {
+    const err = new Error('Forbidden');
+    err.status = 403;
+    throw err;
+  }
   return trip;
 };
 
