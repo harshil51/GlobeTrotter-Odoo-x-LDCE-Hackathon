@@ -1,5 +1,5 @@
 const aiProvider = require('../providers/aiProvider');
-const googleProvider = require('../providers/googleProvider');
+const osmProvider = require('../providers/osmProvider');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
@@ -13,7 +13,7 @@ class ItineraryService {
     for (const dest of destinations) {
       // Find top places for this destination based on user interests
       const query = `${dest} ${interests.join(' ')} attractions`;
-      const places = await googleProvider.searchPlaces(query);
+      const places = await osmProvider.searchPlaces(query);
       aggregatedPlaces[dest] = places.slice(0, 10);
     }
 

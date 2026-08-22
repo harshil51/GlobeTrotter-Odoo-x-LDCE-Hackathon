@@ -51,7 +51,7 @@ export default function NewTrip() {
     if (step === 2) {
       if (form.endDate < form.startDate) { toast.error('End date must be on or after start date'); return; }
     }
-    if (step < 3) setStep(s => s + 1);
+    if (step < 4) setStep(s => s + 1);
   };
 
   const handleCreate = async () => {
